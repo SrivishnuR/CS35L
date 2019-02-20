@@ -1,0 +1,27 @@
+Lab 7 Log
+
+In Ubuntu Terminal
+
+Server steps
+dpkg --get-selections | grep openssh // This is used to check if openssh-server and openssh-client is installed
+sudo apt-get install openssh-server // openssh-server is not installed, so we install it
+ssh-keygen // Create a keygen. Default saved to (/home/ubuntu/.ssh/id_rsa). Enter a password. Mine is turtles.
+cat ~/.ssh/id_rsa // This is done to see the encryption key
+sudo useradd -d /home/lab7 -m bigturtle // We now create an account and folder for the client bigturtle on the server
+sudo passwd bigturtle // We now set the password for the client bigturtle. The password is smallturtle.
+cd /home/lab7 // CD into the client's folder on the server
+sudo mkdir .ssh // Make a directory called .ssh in this folder
+sudo chown -R bigturtle .ssh // Give ownership to bigturtle
+sudo chmod 700 .ssh // Give permissions to bigturtle
+ifconfig // Get the ip address of the server so the client can ping it
+
+Client steps
+ssh-keygen // Generate a public and private key pair
+ssh-copy-id -i bigturtle@10.97.85.125 // Copy public key to the server for key-based authentication. Enter bigturtle's password smallturtle here.
+ssh-add // Add private key to authentication agent (ssh-agent)
+ssh -X bigturtle@10.97.85.125 // SSH to server (with X11 session forwarding), and put the keygen password in 
+so the client can use the private key to decrypt the message the server sends so that we can create a secure 
+connection.
+firefox // Now the client can run programs on the server!
+xterm
+ps -ef | grep xterm // Shows that the client is now using the xterm process!

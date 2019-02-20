@@ -1,0 +1,110 @@
+1. 
+You do this by using the command
+man -K word
+and word stands for the specific word you are looking for
+
+2.
+The cp program is located at 
+/bin/cp
+and this is found using the command
+which cp
+
+The wc program is located at
+/user/bin/wc
+and this is found using the command
+which wc
+
+3.
+The programs are
+w, which is used to show who si logged on and what they are doing
+X, which is a portable network-transparent window system
+and 
+[, which is used for condition testing in shell scripts
+
+This was found by using the commands
+
+cd /usr/bin
+find -executable -name '?'
+
+4.
+/etc/alternatives/emacs is executed when you run the symbolic link emacs in /usr/bin.
+
+This is found by using the commands
+cd /usr/bin
+ls -l emacs
+
+5.
+g-s
+setuid bit that allows the person executing the problem to run with permissions of owner of the file
+o-x
+setuid bit that removes permission from others
+
+6.
+The command
+find -mtime 21
+Allows you to look for all files modified in the last three weeks
+
+7. 
+To command
+find -type d -mtime -21
+Allows you to look for all the directories modified in the last three weeks
+
+8.
+There are 20 symbolic links in the same directory as find
+I used the command
+find -type l | wc -l
+to get this
+
+9.
+libICE.so.6.3.0
+To find this I used the command
+cd /usr/lib
+find -type f | ls -lt | tail -1
+
+10. 
+Locale gets its data from the current locale environment defined by each category defined by the
+LC_* environment variables
+
+11.
+Buffer-menu-sort
+Buffer-menu-sort-by-column
+ibuffer-invert-sorting
+ibuffer-toggle-sorting-mode
+rmail-sort-by-author
+rmail-sort-by-correspondent
+rmail-sort-by-date
+rmail-sort-by-labels
+rmail-sort-by-lines
+rmail-sort-by-recipient
+rmail-sort-by-subject
+sort-columns
+sort-fields
+sort-lines
+sort-numeric-fields
+sort-pages
+sort-paragraphs
+sort-regexp-fields
+
+12.
+
+13.
+Ctrl-G
+quits and ends the current command
+
+14.
+Yank is about reinserting text - C-y
+
+15.
+Dired command gives current and parent directory
+
+#include <stdio.h>
+int
+main (void)
+{
+  char n = '\n';
+  char b = '\\';
+  char q = '"';
+  char const *p = "#include <stdio.h>%cint%cmain (void)%c{%c  char n = '%cn';%c  char b = '%c%c';%c  char q = '%c';%c  char const *p = %c%s%c;%c  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);%c  return 0;%c}%c";
+  printf (p, n, n, n, n, b, n, b, b, n, q, n, q, p, q, n, n, n, n);
+  return 0;
+}

@@ -1,0 +1,64 @@
+Lab 5 Notes
+
+System Call Programming and debugging
+
+Outline
+	Buffers, buffered I/O
+	Why do we want to use buffer
+	Buffer overrruns, and techniques for avoiding them
+	System Calls vs Library calls
+	How to use system calls in C
+	C and system programming
+
+What is a Data Buffer
+     
+     A data buffer is a region of physical memory storage used to temporarily store data while it is being moved fro	m one place to another
+
+     When watching a movie online the web service will continually download the next 5 minutes or so into the buffer, that way your computer doesn't have to download the movie as you're watching it
+
+Same idea in programming
+
+If the producer writes at a faster rate than the consumer then the producer will overwrite data / Producer waits / Buffer overflow
+If the producer writes at a slower rate than the consumer then the consumer might read empty memory locations / Buffer underflow
+If the producer is writing at the same rate that the consumer is reading, no problem!
+
+Why Buffer Overflow is Difficult to prevent
+
+C / C++ provide no built-in protection against accessing or overwriting data in any part of memory and do not automatically check that data written to an array is within the boundaries of that array
+
+C++ has libraries that allow programmer to manually check the issue, but C does not provide any library support for this
+
+Bounds checking can prevent buffer overflows, but requires additional code and processing time
+
+int *a = (int *) malloc(sizeof(int) * 10);
+
+for (int i = 0; i < 100; i ++)
+    a[i] - 10;
+
+This won't give an error but has undefined behaviour. This is an example of buffer overflow.
+
+Protective Countermeasures
+Choice of programming language
+Use of safe libraries
+Buffer overflow protection
+Pointer protection
+Executable space protection
+Address space layout randomization
+Deep packet inspection
+Testing
+
+Example of C functions that use Data Buffer
+
+int getchar(void)
+int putchar(int char)
+
+These functions read from or write to a buffer that temporarily stores input/output
+
+THis means when you ask user to input some characters from stdin and read them with getchar(), then all characters are stored in a buffer whent the user presses enter, and then been read one by one by getchar()
+
+If you use a function without buffer to read, you will literally read one byte by one byte from stdin when the user presses enter
+
+For lab -
+1) Check if len(from) = len(to)
+2) From should be unique
+3) Read char -> transcrie -> write to stdout

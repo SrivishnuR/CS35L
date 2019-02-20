@@ -1,0 +1,112 @@
+Lab 3 Log
+
+cd ~/Documents/lab3 // Access lab3
+
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz 
+// Download the bugged coreutils
+
+mkdir coreutilsinstall // Make a directory for the install location
+
+tar -xzvf coreutils-7.6.tar.gz // Unzip the coreutils file
+
+cd coreutilsinstall // Now we cd into coreutils
+
+pwd // Get and copy the full address
+
+cd ../coreutils-7.6 // cd into coreutils-7.6
+
+./configure --prefix=/u/cs/ugrad/srivishn/Documents/lab3/coreutilsinstall
+// Checks the configuration system and makes the install directory 
+// coreutilsinstall
+
+make // make the file
+
+make install // move the installation into coreutilsinstall
+
+cd ~/Documents/lab3/coreutilsinstall // Now we move into the installation 
+// directory
+
+cd bin // The ls executable is found in bin
+
+./ls -l // This reproduces the bug and the date is YYYY-MM-DD
+
+cd ~/Documents/lab3/coreutils-7.6 // We go back to the download directory 
+// to fix the bug
+
+emacs src/ls.c // The patch notes tell us that ls.c is located in src 
+// directory so we emacs into here
+
+#### In emacs ####
+M-g g 2016 C-k C-k // This deletes the first line case_long_iso_time_style 
+// which we are supposed to delete as specified in the patch log
+
+M-g g 2031 C-SP C-n C-n C-n C-n C-n C-n C-n // This deletes the for loop 
+// as specified in the patch log
+
+Enter C-p Tab l o n g _ t i m e _ f o r m a t [ i ] SP  = Enter 
+// This types in the first line we need to add
+
+Tab d c g e t t e x t SP ( N U L L , SP l o n g _ t i m e _ f o r m a t 
+[ i ] , SP L C _ T I M E ) ; // This is the second line we need to add
+
+C-x C-c y // Save and exit emacs
+####          ####
+
+cd .. // cd back to our lab3 folder
+
+mkdir coreutilsinstallpatched // Make a new directory to install our 
+// patched version of coreutils
+
+cd coreutilsinstallpatched
+
+pwd // Get the pwd and copy it so we can configure coreutils to install
+// into this directory now
+
+cd ../coreutils-7.6 // cd into the downloaded directory
+
+./configure --prefix=
+/u/cs/ugrad/srivishn/Documents/lab3/coreutilsinstallpatched 
+// We change the directory to install this new coreutils into
+
+make // We make the file again as we configured ls.c
+
+make install // We now move coreutils into the install directory
+
+cd .. // We cd back to our lab3 folder
+
+mkdir lstest // We now make a test directory with an old and a new 
+// file to test our ls commands
+
+cd lstest
+
+touch newfile // We create a file with the current date and time
+
+touch -d '2015-02-01 11:00 GMT' oldfile // And we create a file that is 
+// two years old
+
+ls -l // We first try the normal ls on our folder
+
+## ls output ##
+total 0
+-rw-r--r-- 1 srivishn csugrad 0 Feb  1 14:35 newfile
+-rw-r--r-- 1 srivishn csugrad 0 Feb  1  2015 oldfile
+##           ##
+
+../coreutilsinstall/bin/ls -l // Then we try the bugged version
+
+## unpatched ls output ##
+total 0
+-rw-r--r-- 1 srivishn csugrad 0 2017-02-01 14:35 newfile
+-rw-r--r-- 1 srivishn csugrad 0 2015-02-01 03:00 oldfile
+##                     ##
+
+../coreutilsinstallpatched/bin/ls -l // The we try the patched version
+
+## patched ls output ##
+total 0
+-rw-r--r-- 1 srivishn csugrad 0 Feb  1 14:35 newfile
+-rw-r--r-- 1 srivishn csugrad 0 Feb  1  2015 oldfile
+##                   ##
+
+// As we can see, once the patch has been applied the the coreutils ls works 
+// as it is supposed to

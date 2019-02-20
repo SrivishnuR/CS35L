@@ -1,0 +1,49 @@
+Homework 9 Log
+
+cd ~/Documents/lab9/diffutils/
+git branch quote v3.0
+get checkout quote // make and checkout the branch qutoe
+patch -p1 < quote-3.0-patch // I patch this new branch
+emacs quote-3.0-patch
+
+### In emacs ###
+c-X 4 a // access the changelog buffer
+I then copy and modify the quote-patch.txt changelog
+and put it in here
+c-X c-C // exit emacs
+################
+
+git add .
+git commit -F ChangeLog // I commit the log
+
+## My partner is Nikhil Bhatia ##
+
+git format-patch -1 --stdout > formatted-patch.txt // Create a patch
+get branch partner v3.0 // Create a new branch for partner
+git checkout partner // Check it out
+git am < partner-patch.txt // Applying partner's patch
+
+## Testing his patch ##
+export PATH=$PATH:/usr/local/cs/bin
+./bootstrap
+./configure
+make
+make check // This succeeds!
+make distdir
+
+emacs ChangeLog // The changelog is the same as my parters, so this succeeds!
+
+### Notes ###
+For my patch you need to use 
+git am --ignore-whitespace 
+#############
+
+### Step 10 ###
+git clone ~eggert/src/gnu/emacs emacsgit
+cd emacsgit
+export PATH=$PATH:/usr/local/cs/bin/
+gitk
+
+### The newest merge is ###
+Merge branch 'master' into xwidget    2015-01-25 12:19:27
+###########################

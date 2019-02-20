@@ -1,0 +1,114 @@
+What is a thread?
+
+A flow of instruction, path of exuecution within a process. The smallest unit of processing sheduled by OS. A process consists of at least one thread.
+
+Multiple threads can be run on:
+
+A uniprocessor (time-sharing)
+  Processor switches between different threads
+  Parallelism is an illusion
+
+A multiprocessor
+  Multiple processors ore cores run the seperate threads
+
+Multitasking - Multiple processes on one core
+Multithreading - Multiple threads from the same process split between multiple cores
+
+A thread is a part of a process
+
+Threads share the main processes global data, code, and heap. However, the stacks are different.
+Threads have less overhead than creating a new process.
+
+When you context switch, swithing between threads is easier since the stack is all you need to save.
+
+One process one thread 
+One process multiple threads - multithreading
+multiple processes one thread per process - multitasking
+multiple processes multiple threads - both
+
+tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -23 - words
+
+Process 1 (tr), Process 2 (sort), Process 3 (comm)
+Each process has its own address space
+How do these processes communicate?
+    Pipes/System Calls
+
+Threads share all of the process's memory except for their stacks
+=> Data sharing requires no extra work (no system calls, pipes, etc)
+
+Communication between threads is faster than communication between processes
+
+Shared memory
+Makes multithreaded programming
+      Powerful
+	Can easily access data and share it among threads
+
+
+Since global data is shared, multiple threads can modify the same global, and since multiple threads can be urnning and different speeds, some synchronization is needed.
+
+Mutex
+mutexes - Mutual exclusion lock: Block access to variables by other threadsd. This enforces exclusive access by a thread to a variable or set of variables
+
+PThread creation
+
+int pthread_create(pthread_t * thread, const pthread_attr_t * attr,
+    void * (*start_routine)(void **)m, void
+
+Pthreads
+There are 5 pasic ptreads
+
+pthread_create
+Function: creates a new thread and makes it executable
+Can be called any number of times from anywhere in the code
+Return value:
+Success: zero
+Failure: error number
+
+pthread_create
+int pthread_create(pthread_t *tid, const pthread_attr_t *attr, void*(my_function)(void *), void *arg);
+
+1. tid: unique identifier for newly created thread
+2. attr: object that holds thread attributes (priority, stack size, etc)
+3. Pass in NULL for default attributes
+4. my_function: function that thread will execute once it is created
+5. arg: a single argument that may be passed to my_function
+
+
+pthread_join
+int pthread_join(pthread_t tid, void **status)
+Function: makes originating thread wait for the completion of all it's spawned threads' tasks.
+Without join, the originating thread would exit as soon as it completes its job.
+
+A spawned thread can get aborted even if it is in the middle of its chore
+
+Return value:
+Success: zero
+Failure: error number
+
+Main Thread -m
+t1 t2 t3 t4 t5
+
+Order of exec
+
+t1 t2 m t4 t3 t5 
+
+Main thread
+// Creates the threads
+// Waits for the threads to finish
+pthread_join(t1, NULL)
+pthread_join(t2, NULL)
+pthread_join(t3, NULL) // Main Thread Pause
+pthread_join(t4, NULL) // 
+pthread_join(t5, NULL) // Main Thread Pauses here
+
+gcc yourfile.c -o obj -lpthread;
+
+thread is tied to a function at all times
+
+For lab
+Generate huge file
+Time sort
+Run with different number of threads
+
+od -An -t f8 -N 80000000 < /dev/urandom | tr -s ' ' '\n' > out // make random file
+wc -l out // print out number of lines

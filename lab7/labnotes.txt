@@ -1,0 +1,40 @@
+Encryption types:
+
+Symmetric Key Encryption
+a.k.a shared/secret key
+Key used to encrypt is same key as used to decrypt
+
+Asymmetric Key Encryption: Public/Private
+2 different (but realtaed) keys: public and private
+Only creator knows the relation. Private key cannot be derived from public key
+
+Public-key Encryption (Asymmetric)
+
+Uses a pair of keys for encryption
+
+Public key - Published and known to everyone
+Private key - Secret key known only to the owner
+
+Encryption
+	Use public key of reciever to encrypt
+	Use private key of reciever to decrypt
+
+Host validation
+Client asks server to prove that it is the owner of te public key using asymmetric encryption.
+Encrypt a message with given public key
+If server is the true owner, it can decrypt the message with the private key
+If everything works, host is successfully validated.
+
+Session Encryption
+Client and server agree on symmetric encryption key (session key)
+This session key is communicated using asymmetric encryption.
+
+Client authentication
+password-based authentication
+Prompt for password on remote server
+If username specified exists and remote password for it is correct then the system lets you in
+
+Key-based authentication
+Generate a key pair on the client
+Copy the public key to the server (~/.ssh/authorized_keys)
+Server authenticates client if it can demonstrate 

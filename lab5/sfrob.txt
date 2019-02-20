@@ -1,0 +1,98 @@
+Sfrob timings
+
+Comparison of sfrob vs sfrobu -
+
+Using an input file of 10 words -
+
+sfrobu - 
+
+real    0m0.002s
+user    0m0.001s
+sys     0m0.001s
+
+sfrob -
+
+real    0m0.002s
+user    0m0.000s
+sys     0m0.002s
+
+Using an input file of 100000 words -
+
+sfrobu -
+
+real    0m0.003s
+user    0m0.001s
+sys     0m0.001s
+
+sfrob -
+
+real    0m0.003s
+user    0m0.003s
+sys     0m0.000s
+
+Uising an input file of 1000000 words -
+
+sfrobu -
+
+real    0m0.004s
+user    0m0.001s
+sys     0m0.001s
+
+sfrob -
+
+real    0m0.004s
+user    0m0.002s
+sys     0m0.000s
+
+From what is shown, the timings for sfrobu and sfrob are pretty similiar. However,
+the sys time for sfrobu is almost always larger due to the fact that more syscalls are done
+due to how read and write are called instead.
+
+sfrob vs sfrobu with 1000000 words piped in -
+
+sfrobu -
+
+real    0m0.048s
+user    0m0.023s
+sys     0m0.026s
+
+sfrob -
+
+real    0m0.036s
+user    0m0.027s
+sys     0m0.003s
+
+Here more of a difference can be seen since sfrobu now reads in byte by byte.
+sfrobs is shown to be faster since it is buffered.
+
+Timing comparisons of sfrob, sfrobu, sfrobu -f, sfrobs, and sfrobs -f with 1000000 words -
+
+sfrob -
+
+real    0m0.004s
+user    0m0.002s
+sys     0m0.000s
+
+sfrobu -
+
+real    0m0.003s
+user    0m0.002s
+sys     0m0.001s
+
+sfrobu -f -
+
+real    0m0.003s
+user    0m0.001s
+sys     0m0.001s
+
+sfrobs -
+
+real    0m0.010s
+user    0m0.003s
+sys     0m0.004s
+
+sfrobs -f -
+
+real    0m0.006s
+user    0m0.002s
+sys     0m0.004s

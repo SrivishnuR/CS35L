@@ -1,0 +1,178 @@
+Lab 9 Log
+
+git clone  https://git.savannah.gnu.org/git/diffutils.git // get the diffutils.git file
+cd diffutils // cd in
+git log > git-log.txt // generate a log
+git tag > git-tag.txt // generate a file of tags
+emacs git-log.txt
+
+### in Emacs ###
+c-s like this // we find that this is patch 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f
+#######
+
+git format-patch -1  62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f --stdout > quote-patch.txt // to regenerate the patch
+git checkout v3.0 -b tempbranch // Checking out version 3.0 of diffutils into tempbranch
+
+6.
+to patch file
+
+patch -p1 < quote-patch.txt
+
+use git status to check the reject files
+
+### Untracked files ###
+       NEWS.orig
+#       README-hacking.orig
+#       README-hacking.rej
+#       README.orig
+#       README.rej
+#       cfg.mk.orig
+#       cfg.mk.rej
+#       git-log.txt
+#       git-tag.txt
+#       ms/config.site.orig
+#       quote-patch.txt
+#       src/cmp.c.orig
+#       src/context.c.orig
+#       src/diff.c.orig
+#       src/diff.c.rej
+#       src/diff.h.orig
+#       src/diff3.c.orig
+#       src/diff3.c.rej
+#       src/dir.c.orig
+#       src/sdiff.c.orig
+#       src/system.h.orig
+#       src/util.c.orig
+#       tests/help-version.orig
+######################
+
+7.
+emacs src/analyze.c
+C-x v = to open up vs-diff buffer
+C-h m to use describe mode
+C-x b to switch to *Help* buffer
+Diff-apply-hunk is C-c c-a
+Diff-goto-source is C-c C-c
+C-x k to kill buffer
+
+use 
+git status  to check what files are modified and change the files that arent .c
+
+c-x v u yes
+
+#       modified:   NEWS
+#       modified:   README
+#       modified:   TODO
+#       modified:   doc/diagmeet.note
+#       modified:   ms/config.bat
+#       modified:   ms/config.site
+#       modified:   po/en.po
+#       modified:   src/analyze.c
+#       modified:   src/cmp.c
+#       modified:   src/context.c
+#       modified:   src/diff.c
+#       modified:   src/diff.h
+#       modified:   src/diff3.c
+#       modified:   src/dir.c
+#       modified:   src/ifdef.c
+#       modified:   src/io.c
+#       modified:   src/sdiff.c
+#       modified:   src/side.c
+#       modified:   src/system.h
+#       modified:   src/util.c
+#       modified:   tests/help-version
+
+Then after
+
+git status
+
+#       modified:   src/analyze.c
+#       modified:   src/cmp.c
+#       modified:   src/context.c
+#       modified:   src/diff.c
+#       modified:   src/diff3.c
+#       modified:   src/dir.c
+#       modified:   src/ifdef.c
+#       modified:   src/io.c
+#       modified:   src/sdiff.c
+#       modified:   src/side.c
+#       modified:   src/util.c
+
+in emacs for each file
+
+we can revert context.c since only thing changed is comments
+
+and analyze.c
+ifdef.c
+io.c
+side.c
+
+
+For cmp.c
+emacs first
+c-x v =
+c-c c-c
+then just manually check and replace to match it
+c-x o to switch buffers and keep going
+repeat again
+
+Use emacs to examine src/*.c.rej files
+Apply 
+diff.c.rej changes to diff.c
+and 
+diff3.c.rej changes to diff3.c
+
+to get rid of untracked files do
+git clean -f
+
+step 12
+git status
+cmp.c diff.c diff3.c dir.c sdiff.c util.c
+
+#       modified:   src/cmp.c
+#       modified:   src/diff.c
+#       modified:   src/diff3.c
+#       modified:   src/dir.c
+#       modified:   src/sdiff.c
+#       modified:   src/util.c
+
+git diff > quote-3.0-patch.txt 
+This patch file should have 336 lines
+We get 335 lines for some reason
+
+13.
+export PATH=/usr/local/cs/bin:$PATH //cs/bin has a binary that ./bootstrap needs
+./bootstrap
+./configure
+make
+make check
+
+To test
+./diff . -
+./diff: cannot compare '-' to a directory
+## NO `! ### LITLITLIT
+
+14.
+cd ~/Documents/lab9
+mkdir diffutils-3.0
+mkdir diffutils-3.0-patch
+mkdir temp
+cd temp
+git clone ~eggert/src/gnu/diffutils
+cd diffutils
+git checkout v3.0 -b mybranch
+patch -p1 < ~Documents/lab9/diffutils/quote-3.0-patch.txt
+cp -r src ~/Documents/lab9/diffutils-3.0-patch
+
+cd ~/Documents/lab4
+mkdir temp2
+cd temp2
+git clone ~eggert/src/gnu/diffutils
+cd diffutils
+git checkout v3.0
+cp -r src ~/Documents/lab9/diffutils-3.0
+
+cd ~/Documents/lab9/
+diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch >quote-3.0-test.txt
+
+diff quote-3.0-text.txt diffutils/quote-3.0-patch.txt > out.txt

@@ -1,0 +1,16 @@
+Homework questions
+
+### Question 1 ###
+It would be fine if the other teams had been observing all the bytes going across the network 
+as they cannot decrypt the data without the private key, passcodes and passphrases.
+
+1) If the teams had tapped our keystrokes, the network is not secure, as while the transfer 
+of messages throughout the network are secure, the ends are not, and the other team can learn 
+passwords and passphrases throughout the keystrokes.
+
+2) If the other teams had temporary physical control of the USB, it would not be secure as they would have access to our private key.
+
+### Question 2 ###
+gpg --verify only verifies that the file and signature match or not, it doesn't check if I made the file personally.
+
+The best way to solve this is to have a third party keep track of who has the public key. 

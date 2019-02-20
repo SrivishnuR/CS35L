@@ -1,0 +1,5 @@
+for using echo with a command
+
+echo `ldd whatever `
+
+./ldd-sort.sh | sort -u > file.txt

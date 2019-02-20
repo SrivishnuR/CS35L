@@ -1,0 +1,181 @@
+Version control
+
+Track changes to code and other files related to the software
+      What new files were added?
+      What changes made to files?
+      Which version had what changes?
+      Which user made the changes?
+
+Track the entire history of the software
+
+Version control software
+	Examples: GIT, Subversion, Perforce
+
+In a 
+Distributed VCS
+Version history is replicated at every user's machine
+Users have version control all the time
+Changes can be communicated between users
+Git is distributed
+
+Technical Terms
+Repository
+	Files and folder related to the software code
+	Full History of the software
+
+Working Copy
+	Copy of software's file in the repository
+
+Check out
+      To create a working copy of the repository
+
+Check in / Commit
+      Write the changes made in the working copy to the repository
+      Commits are recorded bythe VCS
+
+First Git Repo
+mkdir gitroot
+cd gitroot
+git init
+echo "Hello World" > hello.txt
+git status
+git add . // adds contents to index 
+git commit -m 'Check in number one' // Commiting the changes
+echo "I love Git" >> hello.txt
+git status
+git diff
+git add hello.txt // adds to staging area
+git diff HEAD
+git commit -m "Second commit"
+
+    A---B---C topic
+   / 
+D---E---F---G master
+
+A---B---C topic
+     /      \
+ D---E---F---G---H master
+
+Branching and merging
+
+	 Master
+	   |
+           V   
+C0<--C1<---C2<---C3
+                 ^
+                 |
+                iss53
+
+C3 was checked out as a clone of Master but is moddified
+
+Diff - 
+first argument is old file, second argument i new file.
+Expressions like 1d0 2a2, 4, 5c4 can be decoded with the syntax
+[line number or range from old file][action][
+
+
+Example
+
+cat file1
+
+Hi,
+Hello
+How are you?
+I am fine,
+Thank you.
+
+cat file2
+
+Hello,
+Hi,
+How are you?
+I am fine.
+
+diff file1 file2
+
+1d0
+
+< Hi,
+
+2a2
+
+> Hi,
+
+4,5c4
+
+< I am fine,
+< Thank you.
+
+---
+
+> I am fine.
+
+diff is relative to the top.
+
+Use -i to ignore case differences
+Report that the files are same using -s option
+Use -b to ignore spaces
+diff command can also be used to compare two directories
+
+How to patch
+patch -p0 < patchfile
+
+Patch
+Create a patch file using a diff
+Apply patch using patch command
+
+Take a backup before applying the patch using -b
+patch -b < hello.patch
+To decide backup file format
+patch -b -V numbered < hello.patch
+
+Dry-run patch (to check if you will get errors)
+patch --dry-run < hello.patch
+
+Undo a patch
+patch -R < hello.patch
+
+no emacs questions
+python-
+how to deal with dictionaries, tuples
+
+Makefile 
+
+gcc -o hellomake hellomake.c hellofunc.c -I.
+
+-I. is what is used to import hellomake.h
+
+
+Makefile - Example
+
+CC=gcc
+CFLAGS=-I.
+
+hellomake: hellomake.o hellofunc.o
+	   $(CC) -o hellomake hellomake.o hellofunc.o $(CFLAGS)
+
+hellofunc.c modification time is checked, and if it is then hellofunc.o is reocmpiled
+
+hellomake: hellomake.o hellofunc.o
+
+this is a rule that is run whenever hellomake.o or hellofunc.o is changed
+
+%.o: %.c $(DEPS)
+     $(CC) -c -o $@ $< #(CFLAGS)
+
+$@ is the same as %.o and $< stands for the first part of the last argument
+whenever a .c file is changed, the correspoding .o file is modified with hellomake.h as an argument
+-o is to create object file and link
+-c -o is to create object file
+
+CC=gcc
+CFLAGS=-I.
+DEPS=hellomake.h
+OBJ=hellomake.o hellofunc.o
+
+%.o: %.c $(DEPS)
+     $(CC) -c -o $@ $< $(CFLAGS)
+
+hellomake: 
+
+Makefile goes top to bottom

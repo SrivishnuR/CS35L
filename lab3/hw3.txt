@@ -1,0 +1,13 @@
+Q1) case_long_iso_time_style was unnecessary to remove but makes 
+sense as this label is not used anywhere else.
+
+Q2) This version will probably introduce other problems with our 
+application as in countries that don't speak english the numerical 
+system represents dates better.
+
+Q3) This doesn't work as self.lines is empty and the choice function 
+can not be run on an empty sequence. random.choice(self.lines) is 
+doing random.choice on an empty list, and this returns an error.
+
+Q4) When we run this script with Python 3 IOError can not be considered 
+a tuple and we get a syntax error.

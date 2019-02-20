@@ -1,0 +1,119 @@
+Week 4 Notes
+
+Process of Debugging
+1. Reproduced the bug
+2. Simplify program input
+3. Use a debugger to track down the origin of the problem
+4. Fix the problem
+
+Debugger
+
+A program that is used to run and debug other (target) programs
+
+Programmer can:
+step through source code line by line
+     each line is executed on demand
+interact with and inspect programs and run-time
+If a program crashes, the debugger outputs where and why it crashed
+
+Segmentation fault:
+When you attempt to dereference a pointer to an invalid memory location
+
+GDB - GNU Debugger
+Debugger for several languages
+
+Allows you to inspect what the program is doing at a certain point during execution
+
+Using GDB
+
+Compile Program
+	Normally: $ gcc [flags] <source files> -o <output file>
+	Debugging $ gcc [other flags] -g <source files> -o <output file>
+	This -g flag enables debuggign support
+Specifiy Program to Debug
+	 $ gdb <executable>
+	 or
+	 $ gdb
+	 (gdb) <executable file>
+Run Program
+	(gdb) run
+	(gdb) run [arguments]
+GDB has an interactive Shell
+Type Quit to exit
+
+Breakpoints
+Setting a breakpoint and running the program will stop program where you tell it to
+You can set as many as you want. The programs execution will stop whenever you hit a breakpoint
+
+Example
+
+(gdb) info breakpoints|break|br|b shows a list of all breakpoints
+
+Example
+
+(gdb) break file1:6
+      Creates breakpoint at line 6
+
+(gdb) break my_function
+      Program will pause at the first line of my_function
+
+(gdb) break [position/breakpoint number] if expression
+      Program will pause at specified position only when the expression evaluates to true. Can be variables from the program itself
+
+Deleting and disabling Breakpoints
+
+(gdb) delete [bp_number | range]
+      Deletes the specified breakpoint or range of breakpoints
+(gdb) disable [ bp_nuber | range ]
+      Temporarily deactivates a breakpoint or a range of breakpoints
+(gdb) enable [ bp_number | range]
+      restores disabled breakpoints
+If no arguments are supplied all breakpoints are affected
+
+(gdb) ignore bp_number iterations
+      Instruction DB to pass over a breakpoint without stopping a certain number of times.
+
+bp_number - number of breakpoint
+iterations - number of times you want to ignore the breakpoint to be ignored
+
+Resuming execution after a break
+
+When a program stops at a breakpoint you can -
+
+c or continue: debugger keeps going
+s or step: debugger continues to the next line of code
+n or next: debugger will continue to next source line in the current stack frame. (It will execute the subroutine but won't step into it)
+f or finish: debugger will resume execution until the current function returns 
+Execution stops immediatly after the program flow returns to the functions caller.
+In other words it steps you out of the subroutine you are currently in.
+
+If you press Quit your breakpoints are gone. Run will start gdb from the start again. If you change your code, use run as it will store your breakpoints.
+
+Watchpoints
+
+Used to watch/observe changes to variables
+
+(gdb) watch my_var
+      sets a watchpoint on my_var
+      the dubgger will stop when the value of my_var changes
+      old and new values will be printed
+      It will only work if the function is in scope
+      If your variable is not in main, you have to set a breakpoint at the function that contains the variable to be	  modified and then use the watch command
+
+(gdb) rwatch expression
+      The debugger stops the program whenever the program reads the value of any object involved in the evaluation o	  f expression.
+
+Every time a funcition is called an area of memory is set aside for it. This area of memory is called a stack frame and holds 
+
+Stack frames and the stack
+(gdb) info frame
+      Displays info about the stack frame including its return address and saved register values
+(gdb) info locals
+      Lists the local variables of the function corresponding to the stack frame, with their current values
+(gdb) info args
+      Lists the arguments values of the corresponding function calls
+(gdb) info functions
+      Lists all functions in the program
+(gdb) list
+      List source code liness
+

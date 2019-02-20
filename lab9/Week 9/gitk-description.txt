@@ -1,0 +1,7 @@
+Gitk description
+
+The top window is a history of all the commits and merges along with the author name and date
+
+The bottom left window shows off the diff
+
+And the bottom right window is the list of files impacted by the commit

@@ -1,0 +1,123 @@
+Lab 2 Log ---- Srivishnu Ramamurthi
+
+Commands (for english spell checker) -
+locale // Used to check the locale of our shell. We get LC_CTYPE="en_US.UTF-8"
+, so we do
+
+export LC_ALL='C' // This changes the locale to be the standard C locale
+
+locale // Now our locale shows LC_CTYPE="C"
+
+cd ~/Documents/lab2 // I cd into my lab2 folder
+
+sort /usr/share/dict/words > words // This  sorts the file words in 
+/usr/share/dict/words lexicographically and redirects the output to a file 
+words in my lab2 folder
+
+diff words /usr/share/dict/words // This is done to check the differences 
+between the sorted and unsorted words files
+
+wget http://web.cs.ucla.edu/classes/winter17/cs35L/assign/assign2.html 
+// This downloads the webpage into a html file called assign2.html
+
+tr -c 'A-Za-z' '[\n*]' < assign2.html > assign2tr1.html // This command 
+translates the standard input (which is supplied as assign2.html) and 
+translates anything that isn't the characters A-Z or a-z into a new line, and 
+shows it in the standard output (which is redirected to assign2tr1.html)
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html > assign2tr2.html  // This command 
+translates any repeated sequence of characters that is not a member of the 
+alphabet with a single newline
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort > assign2tr3.html // This 
+command sorts the output of tr -cs 'A-Za-z' '[\n*]' < assign2.html into 
+lexicographic order
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u  > assign2tr4.html // This 
+command takes the output of tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort 
+and removes any repeated lines
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | 
+comm - words > assign2tr5.html // This command takes the ouptut of 
+tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u and sorts it into three 
+coloumns. Coloumn one is words that are found in assign2.html but not in 
+words, coloumn two is words that are found in words but not in assign2.html, 
+and coloumn three is words that are found in both
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | 
+comm -23 - words > assign2tr6.html // This command is the same as the previous 
+except it suppresses coloumns 2 and 3 and we just end up with words that are 
+in assign2.html but not in words
+
+// What we built here was a rudimentary english spell checker
+
+Commands (for building hwords) -
+cd ~/Documents/lab2 // I cd into my lab 2 folder
+
+wget mauimapp.com/moolelo/hwnwdseng.htm // This downloads the webpage into 
+a html file called hwnwdseng.htm
+
+grep -E '<td>.*</td>' hwnwdseng.htm > out1.htm // This removes everything in 
+the file except for patterns of <td>word<\td> and redirects the output to 
+out1.htm
+
+sed '/<td><\/td>/d' out1.htm > out2.htm // This removes any patterns 
+of <td></td>
+
+sed 's/<td>\(.*\)<\/td>/\1/g' out2.htm > out3.htm // This command removes 
+the <td> and the </td> and leaves the text in the middle
+
+emacs buildwords // Creating the shell script
+
+#### Shell Script ###
+#!/bin/bash
+
+file=$1
+
+grep -E '<td>.*<\/td>' $file |
+
+sed '/<td><\/td>/d' |
+
+sed 's/<td>\(.*\)<\/td>/\1/g' |
+
+sed -n 2~2p |
+
+sed 's/<u>\(.\)<\/u>/\1/g' |
+
+tr , '\n' |
+
+sed -e 's/^[ \t]*//' |
+
+tr ' ' '\n' |
+
+sed '/^$/d' |
+
+sed "s/\`/'/g" |
+
+tr A-Z a-z |
+
+sed "/[^pkmnwlhaeiou']/d" |
+
+sort -u
+### End of shell script ###
+
+chmod +x buildwords // Give permission to execute the script
+
+./buildwords hwnwdseng.htm > hwords // Running the script 
+
+// Now we have a script to generate a hawaiian word library
+
+Commands (for hawaiian spell checker) -
+tr '[:upper:]' '[:lower:]' < infile | tr -cs "pkmnwlhae'iou" "[\n*]" 
+| sort -u | comm -23 - hwords // infile stands for the input file
+
+tr '[:upper:]' '[:lower:]' < assign2.html | tr -cs "pkmnwlhae'iou" "[\n*]" 
+| sort -u | comm -23 - hwords | wc -l // this prints out the number of 
+mispelled hawaiian words in assign2.html. We get 198
+
+tr -cs 'A-Za-z' '[\n*]' < assign2.html | sort -u | comm -23 - words | wc -l 
+// this prints out the number of mispelled english words. We get 49
+
+// Examples of words misspelled in hawaiian and not english would be 
+hawaiian, one, and open. Examples of words misspelled in english and 
+not hawaiian would be moolelo, linu, and uppo

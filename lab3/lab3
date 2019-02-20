@@ -1,0 +1,39 @@
+Using python and java in unix
+
+Use python in shell to access python
+
+type 
+exit() to exit python
+
+look at variable.py example for basic python operations
+
+type
+python variable.py
+to run variable.py
+
+you can also create an intermediate file with python as well and when you run that it is faster than running the script from the start
+
+If you take out the comma in the print then the pharenteses is not shown
+
+In functions in python, the arguments can be in any order as long as it is sent in the way as
+
+printDetails(name="Vishnu", age="20")
+
+Lists are essentially the same as arrays, however a list can hold elements of multiple different data types
+
+Lists are mutable - can add, modify, subtract elements.
+Tuples are immutable - cannot add, modify, or subtract elements. However you can assign tuples to other tuples
+For example - 
+tuple3 = tuple4
+Also, tuples are defined with parentheses
+Example - 
+tuple = (12, 23)
+
+Dictionaries -
+Key-value pairs that are modifiable
+
+Classes -
+Similiar to C++
+
+Indentation is everything in python
+

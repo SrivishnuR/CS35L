@@ -1,0 +1,25 @@
+Lab 5 Log
+
+For the transcrliteration program, we need to do three things
+1) Check if length(from) = length(to)
+2) Check if every byte in from is unique
+3) Read from stdin -> transliterate -> write to stdout
+
+To get arguments in a C program, we say 
+int main(int argc, char** argv)
+argc is the ammount of arguments and argv is array of arguments
+
+To compile a C program we do
+gcc program.c -o program
+and then
+./program
+
+Just answer questions in lab file
+
+STRACE
+to generate file of given size
+
+dd if=/dev/urandom of=file.txt bs=5120 count=1000
+
+Strace
+strace -o b1.txt ./tr2b from to < file.txt

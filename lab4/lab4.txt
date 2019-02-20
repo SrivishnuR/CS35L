@@ -1,0 +1,107 @@
+Lab 4 Log
+
+cd Documents/lab4
+wget http://web.cs.ucla.edu/classes/winter17/cs35L/assign/coreutils-with-bug.tar.gz // Downloading the coreutils file
+tar -xvzf coreutils-with-bug.tar.gz
+makedir coreutilsinstall
+cd coreutilsinstall
+pwd // copy the file location
+cd ..
+cd coreutils-with-bug
+./configure --prefix=/u/cs/ugrad/srivishn/Documents/lab4/coreutilsinstall
+make
+
+#### Error from make ####
+In file included from utimecmp.c:41:
+utimens.h:2: error: conflicting types for 'futimens'
+/usr/include/sys/stat.h:374: note: previous declaration of 'futimens' was here
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory `/w/home.13/cs/ugrad/srivishn/Documents/lab4/coreutils-with-bug/lib'
+make[2]: *** [all] Error 2
+make[2]: Leaving directory `/w/home.13/cs/ugrad/srivishn/Documents/lab4/coreutils-with-bug/lib'
+make[1]: *** [all-recursive] Error 1
+make[1]: Leaving directory `/w/home.13/cs/ugrad/srivishn/Documents/lab4/coreutils-with-bug'
+make: *** [all] Error 2
+#### End of error log ####
+
+find -name "utimecmp.h" // found in . /lib/utimecmp.h
+cd ..
+
+### Why it gave us an error ###
+utimecmp.c includes the header files utimecmp.h and utimens.h. utimecmp.h has a header file stats.h which includes 
+the function declaration futimens. The header file utimecmp.h also has the function declaration futimens.
+C does not support function overloading and thus this caused an error.
+######
+
+cd ~/Documents/lab4/coreutils-with-bug
+wget http://web.cs.ucla.edu/classes/winter17/cs35L/assign/coreutils.diff
+patch -p0 < coreutils.diff
+emacs lib/utimens.h // Checking if the patch has been applied properly
+./configure --prefix=/u/cs/ugrad/srivishn/Documents/lab4/coreutilsinstall // reconfiguing just to be safe
+make
+make install
+cd ~/Documents/lab4/coreutilsinstall/bin
+tmp=$(mktemp -d)
+cd $tmp
+touch -d '1918-11-11 11:00 GMT' wwi-armistice
+touch now
+sleep 1
+touch now1
+TZ=UTC0 ~/Documents/lab4/coreutilsinstall/bin/ls -lt --full-time wwi-armistice now now1 // this shows us the bug
+gdb ~/Documents/lab4/coreutilsinstall/bin/ls // while in tmp
+run -lt --full-time wwi-armistice now now1 // this reproduces the bug
+
+### figuring out what the bug is ###
+We first
+emacs ~/Documents/lab4/coreutils-with-bug/src/ls.c
+then we find the function qsort
+we set a breakpoint at line 3034, where qsort is located by running gdb again and doing
+break ls.c:3034
+we run the program. Once it hits the breakpoint, we say
+p func
+to find out what function is being called. We get the function <compare_mtime>. We set a break point here
+break compare_mtime
+We then use step to step through the function. Eventually, there is a call to timespec_cmp.
+By comparing timespec_cmp, we can see what the error is. 
+There is an overflow in the variable diff when a positive a.tv_sec and a negative b.tv_sec as diff = a.tv_sec - b.tv_sec.
+A solution to this would be to just return 1, 0, or -1 instead of the difference.
+######
+
+emacs ~/Documents/lab4/coreutils-with-bug/lib/timespec.h // We emacs into timespec.h to fix the bug
+
+### fixing the bug ###
+We replace 
+int diff = a.tv_sec - b.tv_sec;
+return diff ? diff : a.tv_nsec - b.tv_nsec;
+
+With
+
+if (a.tv_sec > b.tv_sec)
+  return 1;
+if(a.tv_sec < b.tv_sec)
+  return -1;
+else {
+  if (a.tv_nsec > b.tv_nsec)
+    return 1;
+  else if (a.tv_nsec < b.tv_nsec)
+    return -1;
+  else return 0;
+}
+
+and we save and exit
+######
+
+cd ~/Documents/lab4/coreutils-with-bug // We enter the coreutils directory so we can make and install again
+./configure --prefix=/u/cs/ugrad/srivishn/Documents/lab4/coreutilsinstall // reconfiguing just to be safe
+make
+make install
+cd $tmp // We cd into our tmp directory
+~/Documents/lab4/coreutilsinstall/bin/ls -l // Now the program works as intended!
+
+mkdir oldcoreutils
+tar -xvzf coreutils -C oldcoreutils/ // Unzip the file again so that we can make a diff file
+diff oldcoreutils/coreutils-with-bug/lib/timespec.h coreutils-with-bug/lib/timespec.h > lab4.diff // This generates the lab4.diff file
+
+### How well does SEASnet do? ###
+SEASnet does not work well with the new patched version. It changes the date created to 2054-12-17, which is clearly wrong.
+######

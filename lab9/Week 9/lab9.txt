@@ -1,0 +1,156 @@
+Lab 9 Log
+
+git clone  https://git.savannah.gnu.org/git/diffutils.git // get the diffutils.git file
+cd diffutils // cd in
+git log > git-log.txt // generate a log
+git tag > git-tag.txt // generate a file of tags
+emacs git-log.txt
+
+### in Emacs ###
+c-s like this // we find that this is patch 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f
+#######
+
+git format-patch -1  62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f --stdout > quote-patch.txt // to regenerate the patch
+git checkout v3.0 -b tempbranch // Checking out version 3.0 of diffutils into tempbranch
+patch -p1 < quote-patch.txt // to patch the file
+git status // to have an overview of what happened
+
+### Modified files ###
+#       modified:   NEWS
+#       modified:   README
+#       modified:   TODO
+#       modified:   doc/diagmeet.note
+#       modified:   ms/config.bat
+#       modified:   ms/config.site
+#       modified:   po/en.po
+#       modified:   src/analyze.c
+#       modified:   src/cmp.c
+#       modified:   src/context.c
+#       modified:   src/diff.c
+#       modified:   src/diff.h
+#       modified:   src/diff3.c
+#       modified:   src/dir.c
+#       modified:   src/ifdef.c
+#       modified:   src/io.c
+#       modified:   src/sdiff.c
+#       modified:   src/side.c
+#       modified:   src/system.h
+#       modified:   src/util.c
+#       modified:   tests/help-version
+#########################
+
+emacs src/analyze.c // emacs into this file to modify and manually revert the patch
+
+## In emacs ##
+C-x v = to open up vs-diff buffer
+C-h m to use describe mode
+C-x b to switch to *Help* buffer
+Diff-apply-hunk is C-c c-a
+Diff-goto-source is C-c C-c
+C-x k to kill buffer
+###############
+// I repeat this for every file that is not .c
+
+git status // check status again
+
+### Modified files ###
+#       modified:   src/analyze.c
+#       modified:   src/cmp.c
+#       modified:   src/context.c
+#       modified:   src/diff.c
+#       modified:   src/diff3.c
+#       modified:   src/dir.c
+#       modified:   src/ifdef.c
+#       modified:   src/io.c
+#       modified:   src/sdiff.c
+#       modified:   src/side.c
+#       modified:   src/util.c
+#######################
+
+emacs context.c 
+
+### In Emacs ###
+We check to see if any of the changes aren't comments, and then we use
+C-x v u
+We do this for files 
+
+context.c
+analyze.c
+ifdef.c
+io.c
+side.c
+################
+
+emacs cmp.c
+
+### In Emacs ###
+c-x v =
+c-c c-c
+then we just manually check and replace the comments with the previous version
+c-x o is used to switch between the two buffers
+We do this for files
+
+cmp.c
+diff.c
+dir.c
+sdiff.c
+util.c
+#################
+
+emacs diff.c.rej
+
+### In emacs ###
+We examine the rej files and copy the changes into the source file.
+We do this for files
+
+diff.c.rej
+diff3.c.rej
+################
+
+git clean -f // now we get rid of all untracked files
+git status // Check status
+
+### Modified files ###
+#       modified:   src/cmp.c
+#       modified:   src/diff.c
+#       modified:   src/diff3.c
+#       modified:   src/dir.c
+#       modified:   src/sdiff.c
+#       modified:   src/util.c
+#######################
+
+git diff > quote-3.0-patch.txt  // We get 335 lines
+export PATH=/usr/local/cs/bin:$PATH // cs/bin has a binary that ./bootstrap needs
+./bootstrap
+./configure
+make
+make check // This all succeeds
+
+./diff . - // We get the output ./diff: cannot compare '-' to a directory. Notice how there is no `!
+
+### Sanity check ###
+
+cd ~/Documents/lab9
+mkdir diffutils-3.0
+mkdir diffutils-3.0-patch
+mkdir temp
+cd temp
+git clone ~eggert/src/gnu/diffutils
+cd diffutils
+git checkout v3.0 -b mybranch
+patch -p1 < ~Documents/lab9/diffutils/quote-3.0-patch.txt
+cp -r src ~/Documents/lab9/diffutils-3.0-patch
+
+cd ~/Documents/lab4
+mkdir temp2
+cd temp2
+git clone ~eggert/src/gnu/diffutils
+cd diffutils
+git checkout v3.0
+cp -r src ~/Documents/lab9/diffutils-3.0
+
+cd ~/Documents/lab9/
+diffutils/src/diff -pru diffutils-3.0 diffutils-3.0-patch >quote-3.0-test.txt
+
+diff quote-3.0-text.txt diffutils/quote-3.0-patch.txt > out.txt 
+// out contains the differences and the only differences are present in the comments!

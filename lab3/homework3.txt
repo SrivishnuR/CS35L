@@ -1,0 +1,21 @@
+wget http://web.cs.ucla.edu/classes/winter17/cs35L/assign/randline.py
+python randline.py /dev/null
+
+####
+Q3.
+This doesn't work as self.lines is empty and the choice function can not be run on an empty sequence
+random.choice(self.lines) is doing random.choice on an empty list, and this returns an error
+####
+
+export PATH=$PATH:/usr/local/cs/bin ## This sets a path. Now you can access files from this PATH anywhere
+echo $PATH ## Shows your path
+
+/usr/local/cs/bin/python3 randline.py /dev/null ## Run randline.py with python3
+
+####
+Q4.
+IOError can not be considered a tuple and we get a syntax error.
+####
+
+For the script at the end, you use three lists.
+Use an eof char for when it is not part of a column \0

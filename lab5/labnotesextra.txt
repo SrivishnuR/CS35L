@@ -1,0 +1,19 @@
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+struct stat fileinfo;
+//int fstat(int fd, struct stat *buf);
+if(fstat(0, &fileInfo) == -1)
+{
+	// Handle error
+}
+
+unsigned int fsize = fileInfo.st_size;
+//Malloc fsize bytes.
+
+//define set1 = all encrypted chars
+//define set2 = all decrypted chars
+
+tr set1 set2 | sort | tr set2 set1
+

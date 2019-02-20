@@ -1,0 +1,126 @@
+Lab 5 Log
+
+dd if=/dev/urandom of=file.txt bs=5120 count=1000 // We generate a file that is 5120000 bytes large.
+
+### Question 3 ###
+Part a)
+
+We do the command
+strace -c ./tr2b abc xyz < file.txt > b1.txt
+
+We get
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000190           2        81           read
+  0.00    0.000000           0        79           write
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           fstat
+  0.00    0.000000           0        10           mmap
+  0.00    0.000000           0         3           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.000190                   186         1 total
+
+So for the buffered version, we get 186 syscalls in total. This is due to the fact that
+the bytes are put into a buffer and then written or read with the syscall.
+
+Then we do the command
+strace -c ./tr2u abc xyz < file.txt > u1.txt
+
+We get
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 57.14    0.820303           0   5120000           write
+ 42.86    0.615273           0   5120002           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         8           mmap
+  0.00    0.000000           0         3           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    1.435576              10240024         1 total
+
+So for the unbuffered version, we get 10240024 syscalls. This is due to the fact 
+that every single byte is read and written, so we get approximately 5120000 * 2 syscalls.
+
+Part b)
+
+We do the command
+strace -c ./tr2b abc xyz < file.txt
+
+We get
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 97.83    0.003160           0     20191           write
+  2.17    0.000070           1        81           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         4           fstat
+  0.00    0.000000           0        10           mmap
+  0.00    0.000000           0         3           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    0.003230                 20298         1 total
+
+Now we get 20298 syscalls. This is due to the fact that we are now writing to the terminal
+instead of a file.
+
+Then we do the command
+strace -c ./tr2u abc xyz < file.txt
+
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 55.92    0.581343           0   5120000           write
+ 44.08    0.458246           0   5120002           read
+  0.00    0.000000           0         2           open
+  0.00    0.000000           0         2           close
+  0.00    0.000000           0         2           fstat
+  0.00    0.000000           0         8           mmap
+  0.00    0.000000           0         3           mprotect
+  0.00    0.000000           0         1           munmap
+  0.00    0.000000           0         1           brk
+  0.00    0.000000           0         1         1 access
+  0.00    0.000000           0         1           execve
+  0.00    0.000000           0         1           arch_prctl
+------ ----------- ----------- --------- --------- ----------------
+100.00    1.039589              10240024         1 total
+
+We get the same 10240024 syscalls. This is because it doesn't matter where we are
+reading or writing from when using write and read in the unbuffered version.
+
+######
+
+### Question 4 ###
+
+Times for tr2b -
+
+real  0m4.946s
+user  0m0.370s
+sys 0m0.122s
+
+Times for tr2u -
+
+real  0m7.927s
+user  0m0.343s
+sys 0m7.571s
+
+As we can see from this, the buffered version of tr is faster than the unbuffered version.
+
+######

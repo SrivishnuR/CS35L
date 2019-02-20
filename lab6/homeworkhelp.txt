@@ -1,0 +1,75 @@
+Read Me 
+
+tar -xvzf srt.tgz
+make
+time ./srt 1 > /dev/null
+
+real 0m44.470s
+user 0m44.443s
+sys 0m0.000s
+
+1.
+Change nthreads so it can support more than 1
+
+2.
+Make it so the for loop /* for every pixel */ can be done with multiple threads
+
+3.
+Way to parralelize it - 
+First thread will work on px = 1 px = 1 + n, etc
+Second thread will work on px = 2 px = 1 + n, etc
+
+4.
+Make sure to
+#include <pthread.h>
+
+5.
+Need to modify makefile to include 
+LDLIBS to LDLIBS = -lm -lpthread
+
+6.
+Thread Creation -
+
+pthread *tid = malloc(sizeof(pthread_t) * nthreads);
+for(int i = 0; i < nthreads; i++) {
+	pthread_create(&tid[k], NULL, threadFunc, i);
+}
+
+// pthread join
+for(int i = 0; i < nthreads; i++) {
+	pthread_join(tid[i], NULL);
+}
+
+// output
+for(int i = 0; i < width; i++) {
+	for(int j = 0; j < height; j++) {
+		printf scaled_colors[i][j][0];
+		printf scaled_colors[i][j][1];
+		printf scaled_colors[i][j][2];
+		}
+		printf("\n");
+}
+
+7. Thread function
+
+void* threadFunction(void* startIndex) {
+      int start = *((int*) startIndex);
+      Vec3 camera_pos
+      // Copy code;
+      for(int px=srart; px < width; px+=nthreads) {
+      //copy code
+      }     
+}
+
+8. float scaled_color[][][]
+
+scaled_color[px][py][0] =
+scaled_color[px][py][1] =
+scaled_color[px][py][2] =
+
+9. If you need to ssh into the machine, then, 
+ssh -X username#... // X11 forwarding
+
+10. 
+Test it with the command
+make clean check

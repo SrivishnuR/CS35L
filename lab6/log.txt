@@ -1,0 +1,68 @@
+Lab 6 Log
+
+sort --version // Used to check the version of sort. We have version 8.22.
+od -An -t f4 -N 40000000 < /dev/urandom | tr -s ' ' '\n' > input.txt // -An avoids printing the address, f4 stands for interpret every 4 bytes as a float, 
+and 40000000 stands for 40000000 bytes. Then we put each float on a new line using tr and we pipe it into input.txt.
+wc -l input.txt // To check the ammount of lines in input.txt. We get 1000001
+emacs input.txt // We delete the first empty line in input.txt
+
+### Types of time ###
+User Time - Ammount of time that the process took on the processor
+Real Time - Ammount of wall clock time
+System Time - Total time it takes to execute the actual instructions
+######
+
+time -p sort -g --parallel=1 input.txt > /dev/null // We first run sort using only one thread. We send the output to /dev/null as we don't want to display the sort in stdout
+time -p sort -g --parallel=2 input.txt > /dev/null // Now using two threads
+time -p sort -g --parallel=4 input.txt > /dev/null // Using four threads
+time -p sort -g --parallel=8 input.txt > /dev/null // Using eight threads
+time -p sort -g --parallel=16 input.txt > /dev/null // Using sixteen threads
+time -p sort -g --parallel=32 input.txt > /dev/null // Using thirty-two threads
+time -p sort -g --parallel=64 input.txt > /dev/null // Using thirty-two threads
+time -p sort -g --parallel=128 input.txt > /dev/null // Using thirty-two threads
+
+### Sort Times ###
+1 Thread -
+real - 115.49
+user - 110.04
+sys  - 0.20
+
+2 Threads -
+real - 59.06
+user - 109.70
+sys  - 0.23
+
+4 Threads -
+real - 33.89
+user - 112.26
+sys - 0.64
+
+8 Threads -
+real - 20.84
+user - 113.03
+sys - 0.53
+
+16 Threads - 
+real - 15.83
+user - 115.98
+sys - 0.80
+
+32 Threads -
+real - 14.84
+user - 185.62
+sys - 1.11
+
+64 Threads -
+real - 14.22
+user - 186.25
+sys - 1.47
+
+128 Threads -
+real - 15.83
+user - 184.93
+sys - 1.94
+###
+
+### Notes on timings ###
+The fastest real time is for 64 threads, but there is not much of a change in the real, user, and system time once we hit 16 threads. After 128 threads however, it starts getting a bit slower.
+######
